@@ -1,5 +1,5 @@
 import React from 'react'
-import CurrentItem from './Currentitem';
+import CurrentItem from './CurrentItem';
 function BalanceContainer(props) {
     let income = 0;
     let expenses = 0;
