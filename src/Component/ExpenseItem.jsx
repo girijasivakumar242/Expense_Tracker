@@ -1,11 +1,11 @@
 import React from 'react'
 
 function ExpenseItem(props) {
-    const {id, title, amount} = props.expense
+    const {_id, title, amount} = props.expense
     const type = amount > 0 ? "income" : "expense";
     function handleDelete()
     {
-      props.deleteExpense(id)
+      props.deleteExpense(_id)
     }
   return (
     <div className={`expense-item ${type}`}>

@@ -1,31 +1,59 @@
-import React,{useState} from 'react'
+import React,{useState, useEffect} from 'react'
 import Form from './Form.jsx'
 import {v4 as uid} from 'uuid'
 import History from './History.jsx'
 import BalanceContainer from './BalanceContainer.jsx'
 
 function Expensecontainer() {
-  const EXPENSE =[{
-    id:uid(),
-    title:"Food",
-    amount:50
-  },{
-    id:uid(),
-    title:"Transport",
-    amount:20
-  }]
+ 
 
-  const [expense,setExpense] = useState(EXPENSE)
+  const [expense,setExpense] = useState([])
       
-  function addExpense(title, amount)
+  async function addExpense(title, amount)
       {
-        setExpense([...expense,{id:uid(),title, amount}])
-        console.log(expense);
+        try{
+      const newExpense = await fetch("https://expense-server-l6rq.onrender.com/post", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ title, amount }),
+    })
+    const data = await newExpense.json()
+    if(data.expense)
+    { 
+      setExpense([...expense,data.expense])
+
+    }
+   
+  }catch(error)
+  {
+    console.log(error)
+  }
+}
+async function fetchExpenses() {
+    try {
+      const res = await fetch("https://expense-server-l6rq.onrender.com/get");
+      const data = await res.json();
+      if (data.expenses) {
+        setExpense(data.expenses);
       }
-      function deleteExpense(id)
-      {
-        setExpense(expense.filter((item)=>item.id!==id))
-      }
+    } catch (error) {
+      console.log("Error fetching expenses:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+async function deleteExpense(id)
+{
+  await fetch(`https://expense-server-l6rq.onrender.com/expense/${id}`,
+  {
+    method:"DELETE"
+})
+fetchExpenses()
+}
+
   return (
     <>
     <div className='expense-container'>
